@@ -20,7 +20,10 @@ fn initialize_program() {
 
     let simple_phrase: String = get_user_simple_phrase();
     let number_of_columns: usize = get_user_number_of_columns();
-    let simple_phrase_matrix: Array2<char> = get_simple_phrase_matrix(simple_phrase, number_of_columns);
+    let simple_phrase_matrix: Array2<char> = get_simple_phrase_matrix(
+        simple_phrase,
+        number_of_columns
+    );
 
     cipher_simple_phrase(simple_phrase_matrix.clone());
     decipher_simple_phrase(simple_phrase_matrix);
