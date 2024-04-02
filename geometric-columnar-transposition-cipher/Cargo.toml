@@ -1,0 +1,8 @@
+[package]
+name = "transposition-cipher-columnar-geometric"
+version = "0.1.0"
+edition = "2021"
+authors = ["Alexandre Zeni"]
+
+[dependencies]
+ndarray = "0.15.6"
