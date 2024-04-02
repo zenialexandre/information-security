@@ -113,10 +113,10 @@ fn cipher_simple_phrase(simple_phrase_matrix: Array2<char>) {
 }
 
 fn decipher_simple_phrase(simple_phrase_matrix: Array2<char>) {
-    let mut decipher_simple_phrase_output: String = String::new();
+    let mut deciphered_simple_phrase_output: String = String::new();
 
     for cell_value in simple_phrase_matrix.iter() {
-        decipher_simple_phrase_output.push_str(cell_value.to_string().as_str());
+        deciphered_simple_phrase_output.push_str(cell_value.to_string().as_str());
     }
-    println!("\nDeciphered phrase: {}", decipher_simple_phrase_output);
+    println!("\nDeciphered phrase: {}", deciphered_simple_phrase_output);
 }
