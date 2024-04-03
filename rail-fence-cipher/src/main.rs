@@ -1,8 +1,8 @@
+mod constants;
 mod helper;
 
 use ndarray::Array2;
-
-const OPTION_EXTRACTION_ERROR: &str = "Character could not be extracted.";
+use constants::general_constants::OPTION_EXTRACTION_FAILED;
 
 fn main() {
     initialize_program();
@@ -39,7 +39,8 @@ fn execute_decipher_process() {
     println!("\nDeciphered phrase: {}\n", get_deciphered_simple_phrase(
         simple_phrase,
         number_of_rail_fences,
-        simple_phrase_matrix
+        simple_phrase_matrix,
+        true
     ));
 }
 
@@ -55,40 +56,13 @@ fn get_simple_phrase_matrix(
         '-'
     );
 
-    simple_phrase_matrix = set_phrase_characters_on_matrix(
+    simple_phrase_matrix = helper::get_rail_fences_populated(
         simple_phrase_characters,
         number_of_rail_fences,
         simple_phrase_matrix,
-        is_deciphering
-    );
-    return simple_phrase_matrix;
-}
-
-fn set_phrase_characters_on_matrix(
-    simple_phrase_characters: Vec<char>,
-    number_of_rail_fences: usize,
-    mut simple_phrase_matrix: Array2<char>,
-    is_deciphering: bool
-) -> Array2<char> {
-    let mut is_direction_down: bool = false;
-    let mut rail_fence: usize = 0;
-
-    for index in 0..simple_phrase_characters.len() {
-        if rail_fence == 0 || rail_fence == number_of_rail_fences - 1 {
-            is_direction_down = !is_direction_down
-        }
-
-        if !is_deciphering {
-            simple_phrase_matrix[[rail_fence, index]] =
-                *simple_phrase_characters.get(index).ok_or(OPTION_EXTRACTION_ERROR).unwrap();
-        } else {
-            simple_phrase_matrix[[rail_fence, index]] = '@';
-        }
-
-        if is_direction_down { rail_fence += 1; } else { rail_fence -= 1; }
-    }
-    println!("\nPhrase matrix: ");
-    println!("\n{:?}", simple_phrase_matrix);
+        is_deciphering,
+        true
+    ).0;
     return simple_phrase_matrix;
 }
 
@@ -106,9 +80,9 @@ fn get_ciphered_simple_phrase(simple_phrase_matrix: Array2<char>) -> String {
 fn get_deciphered_simple_phrase(
     simple_phrase: String,
     number_of_rail_fences: usize,
-    mut simple_phrase_matrix: Array2<char>
+    mut simple_phrase_matrix: Array2<char>,
+    is_deciphering: bool
 ) -> String {
-    let mut deciphered_simple_phrase_output: String = String::new();
     let simple_phrase_characters: Vec<char> =
         helper::remove_whitespaces_from_simple_phrase(simple_phrase).chars().collect();
 
@@ -117,13 +91,13 @@ fn get_deciphered_simple_phrase(
         simple_phrase_matrix
     );
 
-    deciphered_simple_phrase_output = get_extracted_deciphered_simple_phrase_from_matrix(
-        deciphered_simple_phrase_output,
-        number_of_rail_fences,
+    return helper::get_rail_fences_populated(
         simple_phrase_characters,
-        simple_phrase_matrix
-    );
-    return deciphered_simple_phrase_output;
+        number_of_rail_fences,
+        simple_phrase_matrix,
+        is_deciphering,
+        false
+    ).1;
 }
 
 fn get_simple_phrase_matrix_without_arbitrary_characters(
@@ -134,29 +108,9 @@ fn get_simple_phrase_matrix_without_arbitrary_characters(
 
     for cell_value in &mut simple_phrase_matrix {
         if *cell_value == '@' {
-            *cell_value = *temporary_simple_phrase_characters.first().ok_or(OPTION_EXTRACTION_ERROR).unwrap();
+            *cell_value = *temporary_simple_phrase_characters.first().ok_or(OPTION_EXTRACTION_FAILED).unwrap();
             Some(temporary_simple_phrase_characters.remove(0));
         }
     }
     return simple_phrase_matrix;
-}
-
-fn get_extracted_deciphered_simple_phrase_from_matrix(
-    mut deciphered_simple_phrase_output: String,
-    number_of_rail_fences: usize,
-    simple_phrase_characters: Vec<char>,
-    simple_phrase_matrix: Array2<char>
-) -> String {
-    let mut is_direction_down: bool = false;
-    let mut rail_fence: usize = 0;
-
-    for index in 0..simple_phrase_characters.len() {
-        if rail_fence == 0 || rail_fence == number_of_rail_fences - 1 {
-            is_direction_down = !is_direction_down
-        }
-        deciphered_simple_phrase_output.push_str(simple_phrase_matrix[[rail_fence, index]].to_string().as_str());
-
-        if is_direction_down { rail_fence += 1; } else { rail_fence -= 1; }
-    }
-    return deciphered_simple_phrase_output;
 }
