@@ -13,7 +13,7 @@ def generate_rsa_keys() -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
     return private_key, public_key
 
 def get_file_path_from_user() -> str:
-    return input('Enter the complete path to the file: ')
+    return input('Enter the complete path to the file to be signed: ')
 
 def upload_file(
     file_path: str
@@ -72,11 +72,11 @@ def verify_signature(
         )
         print('Valid signature.')
     except Exception as _:
-        print('Invalid signature')
+        print('Invalid signature.')
 
 if (__name__ == "__main__"):
     (private_key_a, public_key_a) = generate_rsa_keys()
-    (private_key_b, public_key_b) = generate_rsa_keys()
+    (_, public_key_b) = generate_rsa_keys()
 
     file_path: str = get_file_path_from_user()
 
